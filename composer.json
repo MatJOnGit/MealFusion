@@ -1,0 +1,16 @@
+{
+    "name": "nevz/meal-fusion",
+    "description": "API for ingredients and recipes management",
+    "autoload": {
+        "psr-4": {
+            "Api\\": "v1/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mathieu JOURDAN",
+            "email": "ma.jourdan@hotmail.fr"
+        }
+    ],
+    "require": {}
+}

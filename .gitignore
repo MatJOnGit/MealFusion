@@ -1,0 +1,11 @@
+# Automatically generated files and directories
+vendor/
+composer.lock
+composer.phar
+.DS_Store
+.env
+.env.*
+*.log
+
+# Configuration files
+/config/*.php

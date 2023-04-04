@@ -1,0 +1,42 @@
+<?php
+
+namespace Api\Utils;
+
+use PDO;
+use PDOException;
+
+final class Database {
+    private $_db;
+    
+    private $_hostname;
+    private $_dbname;
+    private $_charset;
+    private $_port;
+    private $_username;
+    private $_password;
+    
+    public function __construct() {
+        $config = require_once(__DIR__ . '/../config/database.php');
+        $this->_hostname = $config['hostname'];
+        $this->_dbname = $config['dbname'];
+        $this->_charset = $config['charset'];
+        $this->_port = $config['port'];
+        $this->_username = $config['username'];
+        $this->_password = $config['password'];
+        
+        $dsn = "mysql:host={$this->_hostname};dbname={$this->_dbname};port={$this->_port};charset={$this->_charset}";
+        
+        try {
+            $this->_db = new PDO($dsn, $this->_username, $this->_password);
+            $this->_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        
+        catch (PDOException $e) {
+            throw new \Exception("Connection failed: " . $e->getMessage());
+        }
+    }
+    
+    public function connect() {
+        return $this->_db;
+    }
+}

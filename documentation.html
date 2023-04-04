@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MealFusion API Documentation</title>
+</head>
+<body>
+	<header>
+		<h1>MealFusion API Documentation</h1>
+		<p>Welcome to the official documentation for the MealFusion API. This API allows you to access a variety of ingredients and recipes for your meal planning needs.</p>
+	</header>
+
+    <section>
+        <h2>Authentication</h2>
+
+        <p>To access the MealFusion API, you need to include your authentication key in the headers of your requests. Your key can be obtained by subscribing to a nutrition program on the <a href="http://www.dodie-coaching.fr">Dodie Coaching</a> website.</p>
+        <p>Header parameter: Authentication</p>
+    </section>
+    
+    <section>
+        <div>
+
+        </div>
+        <h2>Endpoints</h2>
+
+        <p>Here are the available endpoints for the MealFusion API:</p>
+    
+        <h3>Get Ingredient by ID</h3>
+
+        <p>Returns the details for the ingredient with the specified ID.</p>
+
+        <p>Endpoint: GET /ingredient/{ingredient_id}</p>
+
+        <p>Parameters:</p>
+        <ul>
+            <li><strong>ingredient_id</strong> (required) - The unique ID of the ingredient to retrieve.</li>
+            <li><strong>authentification</strong> (required) - Your API key.</li>
+        </ul>
+
+        <p>Example Request: GET /ingredient/123</p>
+    
+        <h3>Get Ingredients by Name</h3>
+
+        <p>Returns a collection of ingredients whose name contains the specified string, along with their nutritional data.</p>
+
+        <p>Endpoint: GET /ingredients/{ingredient_name}</p>
+
+        <p>Parameters:</p>
+        <ul>
+            <li><strong>ingredient_name</strong> (required) - The string to search for in ingredient names.</li>
+            <li><strong>authentification</strong> (required) - Your API key.</li>
+        </ul>
+
+        <p>Example Request: GET /ingredients/chicken</p>
+    
+        <h3>Get All Ingredients</h3>
+
+        <p>Returns a collection of all ingredients, along with their nutritional data.</p>
+        <p>Endpoint: GET /ingredients</p>
+        <p>Example Request: GET /ingredients</p>
+    
+        <h3>Get Recipe by ID</h3>
+        <p>Returns the ingredients and measurements for the recipe with the specified ID.</p>
+        <p>Endpoint: GET /recipe/{recipe_id}</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><strong>recipe_id</strong> (required) - The unique ID of the recipe to retrieve.</li>
+        </ul>
+        <p>Example Request: GET /recipe/456</p>
+    
+        <h3>Get Recipes by Name</h3>
+        <p>Returns a collection of recipes whose name contains the specified string.</p>
+        <p>Endpoint: GET /recipes/{recipe_name}</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><strong>recipe_name</strong> (required) - The string to search for in recipe names.</li>
+        </ul>
+        <p>Example Request: GET /recipes/spaghetti</p>
+    
+        <h3>Get All Recipes</h3>
+        <p>Returns a collection of all recipes.</p>
+        <p>Endpoint: GET /recipes</p>
+        <p>Example Request: GET /recipes</p>
+    </section>
+</body>
