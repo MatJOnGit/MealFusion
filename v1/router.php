@@ -15,12 +15,14 @@ try {
     $requestTest = new Api\Tests\RequestTest($requestType);
     
     if ($methodTest->isAllowed && $requestTest->isAllowed) {
-        if (in_array($requestType, ['ingredient, ingredients'])) {
-            echo "We've just received a " . $httpRequest->getMethod() . ' request on ingredients data';
+        if (in_array($requestType, ['ingredient', 'ingredients'])) {
+            $ingredientsController = new Api\Controllers\IngredientsController;
+            $ingredientsController->handleRequest($httpRequest);
         }
         
         elseif (in_array($requestType, ['recipe', 'recipes'])) {
-            echo "We've just received a " . $httpRequest->getMethod() . ' request on recipes data';
+            $recipesController = new Api\Controllers\RecipesController;
+            $recipesController->handleRequest($httpRequest);
         }
         
         else {

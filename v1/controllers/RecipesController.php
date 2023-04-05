@@ -4,8 +4,6 @@ namespace Api\Controllers;
 
 use Api\Models\Recipe;
 
-final class RecipesController {
-    public function handleRequest(object $httpRequest) {
-        
-    }
+final class RecipesController extends CollectionController {
+    
 }

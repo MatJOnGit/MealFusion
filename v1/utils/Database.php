@@ -24,7 +24,7 @@ final class Database {
         $this->_username = $config['username'];
         $this->_password = $config['password'];
         
-        $dsn = "mysql:host={$this->_hostname};dbname={$this->_dbname};port={$this->_port};charset={$this->_charset}";
+        $dsn = "mysql:host={$this->_hostname};port={$this->_port};dbname={$this->_dbname};charset={$this->_charset}";
         
         try {
             $this->_db = new PDO($dsn, $this->_username, $this->_password);
