@@ -3,7 +3,7 @@
 namespace Api\Tests;
 
 class RequestTest {
-    private $_allowedRequests = ['ingredient', 'ingredients', 'recipe', 'recipes'];
+    private $_allowedRequests = ['ingredients', 'recipes'];
     public $isAllowed;
     
     function __construct(string $request) {

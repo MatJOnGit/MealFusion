@@ -24,12 +24,16 @@ final class HttpRequest {
     public function getUri() {
         return $this->_uri;
     }
-    
-    public function getRequest() {
+
+    public function getVersion() {
         return explode('/', $_SERVER['REQUEST_URI'])[2] ?? null;
     }
     
-    public function getRequestParam() {
+    public function getRequest() {
         return explode('/', $_SERVER['REQUEST_URI'])[3] ?? null;
+    }
+    
+    public function getRequestParam() {
+        return explode('/', $_SERVER['REQUEST_URI'])[4] ?? null;
     }
 }

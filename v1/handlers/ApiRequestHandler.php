@@ -5,10 +5,15 @@ namespace Api\Handlers;
 use Api\Models\User;
 
 final class ApiRequestHandler {
-    private $_authHeaderRegex = '/^Bearer [a-z0-9]{40}$/i';
+    private $_authHeaderRegex;
+
+    public function __construct() {
+        $regex = require __DIR__ . '/../config/regex.php';
+        $this->_authHeaderRegex = $regex['authKey'];
+    }
     
     // Tests if the headers needed for a request are set and match the correct format
-    public function getKeyOwnerRights(object $db, object $httpRequest): ?string {
+    public function handleHeaders(object $db, object $httpRequest): ?string {
         // Validates Content-type and Autorization headers
         $contentType = $httpRequest->getHeader('Content-Type') ?? false;
         $authHeader = $httpRequest->getHeader('Authentification') ?? false;
@@ -25,10 +30,10 @@ final class ApiRequestHandler {
         $authKey = substr($authHeader, 7);
         
         // Gets user rights from its authentification key
-        return $this->getUserRights($db, $authKey);
+        return $this->_getUserRights($db, $authKey);
     }
     
-    public function getUserRights(object $db, string $authKey) {
+    private function _getUserRights(object $db, string $authKey) {
         $userRight = new User;
         $userRights = $userRight->selectPermissions($db->connect(), $authKey);
         

@@ -10,14 +10,14 @@ abstract class CollectionController {
         $db = new Database;
         $headerChecker = new ApiRequestHandler();
         
-        $keyOwnerRights = $headerChecker->getKeyOwnerRights($db, $httpRequest);
+        $keyOwnerRights = $headerChecker->handleHeaders($db, $httpRequest);
         
         if ($keyOwnerRights) {
             echo "Key owner " . substr($httpRequest->getHeader('Authentification'), 7) . " is a " . $keyOwnerRights;
         }
         
         else {
-            echo "Invalid key owner";
+            echo "Invalid api key";
         }
     }
 }

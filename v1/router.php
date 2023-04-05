@@ -15,12 +15,12 @@ try {
     $requestTest = new Api\Tests\RequestTest($requestType);
     
     if ($methodTest->isAllowed && $requestTest->isAllowed) {
-        if (in_array($requestType, ['ingredient', 'ingredients'])) {
+        if ($requestType === 'ingredients') {
             $ingredientsController = new Api\Controllers\IngredientsController;
             $ingredientsController->handleRequest($httpRequest);
         }
         
-        elseif (in_array($requestType, ['recipe', 'recipes'])) {
+        elseif ($requestType === 'recipes') {
             $recipesController = new Api\Controllers\RecipesController;
             $recipesController->handleRequest($httpRequest);
         }
