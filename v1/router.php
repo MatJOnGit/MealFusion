@@ -1,44 +1,43 @@
 <?php
 
 declare(strict_types=1);
-session_start();
 
-class Request_Exception extends Exception {}
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Api\Exceptions\EndpointException;
+use Api\Controllers\IngredientsController;
+use Api\Controllers\RecipesController;
+use Api\Handlers\EndpointHandler;
+use Api\Handlers\ResponseHandler;
 
 try {
-    require_once __DIR__ . '/../vendor/autoload.php';
+    $endpointHandler = new EndpointHandler;
     
-    $httpRequest = new Api\Utils\HttpRequest;
-    $requestType = $httpRequest->getRequest();
-    
-    $methodTest = new Api\Tests\MethodTest($httpRequest->getMethod());
-    $requestTest = new Api\Tests\RequestTest($requestType);
-    
-    if ($methodTest->isAllowed && $requestTest->isAllowed) {
-        if ($requestType === 'ingredients') {
-            $ingredientsController = new Api\Controllers\IngredientsController;
-            $ingredientsController->handleRequest($httpRequest);
-        }
-        
-        elseif ($requestType === 'recipes') {
-            $recipesController = new Api\Controllers\RecipesController;
-            $recipesController->handleRequest($httpRequest);
+    if ($endpointHandler->isEndpointValid) {
+        $resource = $endpointHandler->getResource();
+
+        if ($resource === 'ingredients') {
+            $ingredientsController = new IngredientsController($endpointHandler);
+            $responseHandler = new ResponseHandler($ingredientsController->processIngredientRequest());
         }
         
         else {
-            throw new Request_Exception('Forgotten request type');
+            $recipesController = new RecipesController($endpointHandler);
+            $responseHandler = new ResponseHandler($recipesController->processRecipeRequest());
         }
     }
     
     else {
-        echo 'On va rejeter la requête';
+        throw new EndpointException('400');
     }
 }
-
-catch(Request_Exception $e) {
-    echo "New REQUEST EXCEPTION caught: '" . $e->getMessage() . "' in index file \non line " . $e->getLine();
+        
+catch (EndpointException $e) {
+    $responseHandler = new ResponseHandler($e);
+    exit();
 }
 
-catch(Exception $e) {
-    echo "New exception caught: '" . $e->getMessage() . "' in index file \non line " . $e->getLine();
+catch (Exception $e) {
+    $responseHandler = new ResponseHandler('500');
+    exit();
 }

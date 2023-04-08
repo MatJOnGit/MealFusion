@@ -5,7 +5,7 @@ namespace Api\Utils;
 use PDO;
 use PDOException;
 
-final class Database {
+final class DatabaseUtils {
     private $_db;
     
     private $_hostname;
@@ -15,7 +15,8 @@ final class Database {
     private $_username;
     private $_password;
     
-    public function __construct() {
+    public function __construct ()
+    {
         $config = require_once(__DIR__ . '/../config/database.php');
         $this->_hostname = $config['hostname'];
         $this->_dbname = $config['dbname'];
@@ -36,7 +37,8 @@ final class Database {
         }
     }
     
-    public function connect() {
+    public function connect ()
+    {
         return $this->_db;
     }
 }

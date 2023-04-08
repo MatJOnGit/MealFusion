@@ -2,8 +2,9 @@
 
 namespace Api\Controllers;
 
-use Api\Models\Recipe;
+final class RecipesController {
+    public function processRecipeRequest()
+    {
 
-final class RecipesController extends CollectionController {
-    
+    }
 }
