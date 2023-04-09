@@ -2,21 +2,42 @@
 
 namespace Api\Utils;
 
-class MethodUtils {
-    public array $validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
-    
+use Api\Handlers\ResponseHandler;
+use Api\Exceptions\EndpointException;
+use Exception;
+
+final class MethodUtils {
     public string $method;
+    public bool $isMethodValid = false;
     
-    public bool $isMethodValid;
+    private array $_validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
     
     public function __construct()
     {
         $this->method = $_SERVER['REQUEST_METHOD'];
-        $this->validateMethod();
+        $this->_checkMethod();
     }
     
-    public function validateMethod ()
+    /***********************************************************
+    Extracts the method from the endpoint, then tests if the
+    method is a valid method and set the result in isMethodValid
+    ***********************************************************/
+    private function _checkMethod()
     {
-        $this->isMethodValid = in_array($this->method, $this->validMethods);
+        try {
+            if (!in_array($this->method, $this->_validMethods)) {
+                throw new EndpointException('405');
+            }
+            
+            $this->isMethodValid = true;
+        }
+        
+        catch (EndpointException $e) {
+            $responseHandler = new ResponseHandler($e);
+        }
+        
+        catch (Exception $e) {
+            $responseHandler = new ResponseHandler('500');
+        }
     }
 }

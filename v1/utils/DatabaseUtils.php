@@ -15,7 +15,7 @@ final class DatabaseUtils {
     private $_username;
     private $_password;
     
-    public function __construct ()
+    public function __construct()
     {
         $config = require_once(__DIR__ . '/../config/database.php');
         $this->_hostname = $config['hostname'];
@@ -37,7 +37,7 @@ final class DatabaseUtils {
         }
     }
     
-    public function connect ()
+    public function connect()
     {
         return $this->_db;
     }

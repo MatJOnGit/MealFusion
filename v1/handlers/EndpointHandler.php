@@ -22,7 +22,7 @@ final class EndpointHandler {
     
     public bool $isEndpointValid = false;
     
-    public function __construct()
+    public function __construct($db)
     {
         try {
             $this->methodUtils = new MethodUtils;
@@ -32,16 +32,15 @@ final class EndpointHandler {
             
             $this->uriUtils = new UriUtils();
             if (!$this->uriUtils->isUriValid) {
-                echo 'Invalid uri';
+                throw new EndpointException('404');
+            }
+            
+            $this->headersUtils = new HeadersUtils($db);
+            if (!$this->headersUtils->areHeadersValid) {
                 throw new EndpointException('400');
             }
             
-            // $this->headersUtils = new HeadersUtils();
-            // if ($this->headersUtils->areHeadersValid) {
-            //     echo 'headers are okay !';
-            // }
-            
-            // $this->bodyUtils = new BodyUtils();
+            $this->bodyUtils = new BodyUtils();
             // if ($this->bodyUtils->isBodyValid) {
             //     echo 'body is okay !';
             // }
@@ -51,12 +50,10 @@ final class EndpointHandler {
         
         catch (EndpointException $e) {
             $responseHandler = new ResponseHandler($e);
-            exit();
         }
         
         catch (Exception $e) {
             $responseHandler = new ResponseHandler('500');
-            exit();
         }
     }
     

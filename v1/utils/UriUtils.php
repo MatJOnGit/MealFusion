@@ -7,101 +7,68 @@ use Api\Handlers\ResponseHandler;
 use Exception;
 
 final class UriUtils {
-    private string $_uri;
-    public string $resource = '';
+    public bool $isUriValid = false;
     public string $query = '';
     public string $queryParam = '';
+    public string $resource = '';
     
     private array $_regexes;
-    
-    public string $strippedUri = '';
-    public bool $isUriValid = false;
+    private string $_strippedUri = '';
+    private string $_uri;
     
     public function __construct()
     {
         $this->_regexes = include('./v1/config/regex.php');
         $this->_uri = $_SERVER['REQUEST_URI'];
         
-        $this->checkUri();
-        $this->checkResource();
-        $this->checkQuery();
-        $this->checkQueryParam();
+        $this->_checkUri();
+        $this->_checkResource();
+        $this->_checkQuery();
+        $this->_checkQueryParam();
     }
     
-    /*********************************************************
-    Strips the url from the domain + version string in the uri
-    *********************************************************/
-    private function checkUri()
+    public function getQuery()
     {
-        try {
-            if (empty($this->_uri)) {
-                throw new EndpointException('400');
-            }
-            
-            if (!preg_match($this->_regexes['uri'], $this->_uri)) {
-                throw new EndpointException('400');
-            }
-            
-            $this->strippedUri = str_replace('/MealFusion/v1/', '', $this->_uri);
-        }
-        
-        catch (EndpointException $e) {
-            echo 'Uri error';
-            $responseHandler = new ResponseHandler($e);
-            exit();
-        }
-        
-        catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
-            exit();
-        }
+        return $this->query;
     }
     
-    /***********************************************
-    Extract the resource out of the uri, then trips
-    the url from the resource string if there is any
-    ***********************************************/
-    private function checkResource ()
+    public function getQueryParam()
     {
-        try {
-            if (empty($this->strippedUri)) {
-                throw new EndpointException('400');
-            }
-            
-            if (!preg_match($this->_regexes['resource'], $this->strippedUri, $matchedResource)) {
-                throw new EndpointException('400');
-            }
-            
-            $this->resource = $matchedResource[0];
-            $this->strippedUri = str_replace(['ingredients', 'recipes'], '', $this->strippedUri);
-        }
-        
-        catch (EndpointException $e) {
-            echo 'Resource error';
-            $responseHandler = new ResponseHandler($e);
-            exit();
-        }
-        
-        catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
-            exit();
-        }
+        return $this->queryParam;
     }
     
-    /**********************************************
-    Extracts the query out of the uri, then strips
-    the uri from the query string (if there is one)
-    **********************************************/
-    private function checkQuery ()
+    public function getResource()
+    {
+        return $this->resource;
+    }
+    
+    /************************************************************************
+    Returns the query contained between the first "?" and "=" met, in the uri
+    ************************************************************************/
+    private function _extractQuery()
+    {
+        $strippedUri = $this->_strippedUri;
+        $questionMarkPosition = strpos($strippedUri, "?") + 1;
+        $queryLength = strpos($strippedUri, "=") - $questionMarkPosition;
+        $query = substr($strippedUri, $questionMarkPosition, $queryLength);
+        
+        return $query;
+    }
+    
+    /*******************************************************************************************
+    Extracts the query from the temp strippedUrl formed in checkResource method and strips the
+    uri from the query string if there is any to split resource from the rest of the strippedUrl
+    *******************************************************************************************/
+    private function _checkQuery()
     {
         try {
-            if (!empty($this->strippedUri)) {
-                if (!preg_match($this->_regexes['query'], $this->strippedUri)) {
+            if (!empty($this->_strippedUri)) {
+                if (!preg_match($this->_regexes['query'], $this->_strippedUri)) {
                     throw new EndpointException('400');
                 }
                 
-                $this->query = $this->extractQuery();
-                $this->queryParam = str_replace(['?id=', '?name='], '', $this->strippedUri);
+                $this->query = $this->_extractQuery();
+                $this->queryParam = str_replace(['?id=', '?name='], '', $this->_strippedUri);
             }
             
             else {
@@ -110,22 +77,19 @@ final class UriUtils {
         }
         
         catch (EndpointException $e) {
-            echo 'Query error';
             $responseHandler = new ResponseHandler($e);
-            exit();
         }
         
         catch (Exception $e) {
             $responseHandler = new ResponseHandler('500');
-            exit();
         }
     }
     
-    /*********************************************************
-    Extracts the query parameter out of the uri, then tests it
-    with a method to know it the query has a attended format
-    *********************************************************/
-    private function checkQueryParam ()
+    /************************************************************************************
+    Remplaces underscores from strippedUri with spaces to form the query parameter to use
+    in database, then checks if the type of data is correct depending on query value
+    ************************************************************************************/
+    private function _checkQueryParam()
     {
         try {
             if (!$this->isUriValid) {
@@ -133,49 +97,35 @@ final class UriUtils {
                     throw new EndpointException('400');
                 }
                 
-                if (!preg_match($this->_regexes['queryParam'], urldecode($this->strippedUri))) {
+                if (!preg_match($this->_regexes['queryParam'], urldecode($this->_strippedUri))) {
                     throw new EndpointException('400');
                 }
                 
-                $this->strippedUri = str_replace('_', ' ', urldecode($this->strippedUri));
+                $this->_strippedUri = str_replace('_', ' ', urldecode($this->_strippedUri));
                 
-                if ($this->validateQueryParamType()) {
-                    $this->isUriValid = true;
+                if (!$this->_checkQueryParamType()) {
+                    throw new EndpointException('400');
                 }
+                
+                $this->isUriValid = true;
             }
         }
         
         catch (EndpointException $e) {
-            echo 'Query param error';
             $responseHandler = new ResponseHandler($e);
-            exit();
         }
         
         catch (Exception $e) {
             $responseHandler = new ResponseHandler('500');
-            exit();
         }
     }
     
-    /************************************************************************
-    Returns the query contained between the first "?" and "=" met, in the uri
-    ************************************************************************/
-    private function extractQuery ()
-    {
-        $strippedUri = $this->strippedUri;
-        $questionMarkPosition = strpos($strippedUri, "?") + 1;
-        $queryLength = strpos($strippedUri, "=") - $questionMarkPosition;
-        $query = substr($strippedUri, $questionMarkPosition, $queryLength);
-        
-        return $query;
-    }
-    
-    /************************************************************************
-    Verifies that the query parameter is of the attended type :
-        - an "id" query must be followed by a string with letters,
-        - a "name" query must be followed by a string containing only letters
-    ************************************************************************/
-    public function validateQueryParamType()
+    /************************************************************************************
+    Tests if the query parameter string is a "stringified" integer. If query value is set
+    to "name", returns false if the query parameter contains only numbers. If the query
+    value is set to "id", returns true if the query parameter contains only number.   
+    ************************************************************************************/
+    private function _checkQueryParamType()
     {
         if ($this->query === 'name') {
             return !preg_match($this->_regexes['onlyNumbers'], $this->queryParam);
@@ -186,5 +136,60 @@ final class UriUtils {
         }
         
         return false;
+    }
+    
+    /*******************************************************************************************
+    Extracts the resource from the temp strippedUrl formed in checkUri method and strips the uri
+    from the resource string if there is any to split resource from the rest of the strippedUrl
+    *******************************************************************************************/
+    private function _checkResource()
+    {
+        try {
+            if (empty($this->_strippedUri)) {
+                throw new EndpointException('400');
+            }
+            
+            if (!preg_match($this->_regexes['resource'], $this->_strippedUri, $matchedResource)) {
+                throw new EndpointException('400');
+            }
+            
+            $this->resource = $matchedResource[0];
+            $this->_strippedUri = str_replace(['ingredients', 'recipes'], '', $this->_strippedUri);
+        }
+        
+        catch (EndpointException $e) {
+            $responseHandler = new ResponseHandler($e);
+        }
+        
+        catch (Exception $e) {
+            $responseHandler = new ResponseHandler('500');
+        }
+    }
+    
+    /****************************************************************************************
+    Strips the url from the domain + version string in the uri if the uri in not empty and if
+    the start of the uri matches what is intended, then sets the temp results in strippedUri
+    ****************************************************************************************/
+    private function _checkUri()
+    {
+        try {
+            if (empty($this->_uri)) {
+                throw new EndpointException('400');
+            }
+            
+            if (!preg_match($this->_regexes['uri'], $this->_uri)) {
+                throw new EndpointException('400');
+            }
+            
+            $this->_strippedUri = str_replace('/MealFusion/v1/', '', $this->_uri);
+        }
+        
+        catch (EndpointException $e) {
+            $responseHandler = new ResponseHandler($e);
+        }
+        
+        catch (Exception $e) {
+            $responseHandler = new ResponseHandler('500');
+        }
     }
 }
