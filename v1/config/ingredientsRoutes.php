@@ -17,26 +17,29 @@ return [
     
     [
         'method' => 'GET',
-        'uri' => '/MealFusion/v1/ingredients?id={id}',
+        'query' => 'id',
         'permissions' => ['contributor', 'admin'],
         'action' => 'getIngredientById',
-        'bodyParams' => []
+        'uriFormat' => '/MealFusion/v1/ingredients?id={id}',
+        'bodyParamsFormat' => NULL
     ],
 
     [
         'method' => 'GET',
-        'uri' => '/MealFusion/v1/ingredients?name={name}',
+        'query' => 'name',
         'permissions' => ['contributor', 'admin'],
         'action' => 'getIngredientByName',
-        'bodyParams' => []
+        'uriFormat' => '/MealFusion/v1/ingredients?name={name}',
+        'bodyParamsFormat' => NULL
     ],
 
     [
         'method' => 'GET',
-        'uri' => '/MealFusion/v1/ingredients',
+        'query' => '',
         'permissions' => ['contributor', 'admin'],
         'action' => 'getIngredients',
-        'bodyParams' => []
+        'uriFormat' => '/MealFusion/v1/ingredients',
+        'bodyParamsFormat' => NULL
     ],
 
     /*************************************************************/
@@ -44,10 +47,11 @@ return [
 
     [
         'method' => 'POST',
-        'uri' => 'MealFusion/v1/ingredients',
+        'query' => '',
         'permissions' => ['contributor', 'admin'],
         'action' => 'postIngredient',
-        'bodyParams' => [
+        'uriFormat' => 'MealFusion/v1/ingredients',
+        'bodyParamsFormat' => [
             'name' => 'string',
             'preparation' => '?string',
             'type' => 'string',
@@ -68,10 +72,11 @@ return [
 
     [
         'method' => 'PUT',
-        'uri' => 'MealFusion/v1/ingredients?id={id}',
+        'query' => 'id',
         'permissions' => ['contributor', 'admin'],
         'action' => 'editIngredient',
-        'bodyParams' => [
+        'uriFormat' => 'MealFusion/v1/ingredients?id={id}',
+        'bodyParamsFormat' => [
             'name' => 'string',
             'preparation' => '?string',
             'type' => 'string',
@@ -92,9 +97,11 @@ return [
 
     [
         'method' => 'DELETE',
-        'uri' => 'MealFusion/v1/ingredients?id={id}',
+        'query' => 'id',
+        'requiredParam' => true,
         'permissions' => ['admin'],
         'action' => 'deleteIngredient',
-        'bodyParams' => []
+        'uriFormat' => 'MealFusion/v1/ingredients?id={id}',
+        'bodyParamsFormat' => NULL
     ]
 ];

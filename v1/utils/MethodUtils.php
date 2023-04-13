@@ -7,15 +7,19 @@ use Api\Exceptions\EndpointException;
 use Exception;
 
 final class MethodUtils {
-    public string $method;
+    private string $_method;
     public bool $isMethodValid = false;
     
     private array $_validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
     
     public function __construct()
     {
-        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->_method = $_SERVER['REQUEST_METHOD'];
         $this->_checkMethod();
+    }
+
+    public function getMethod() {
+        return $this->_method;
     }
     
     /***********************************************************
@@ -25,7 +29,7 @@ final class MethodUtils {
     private function _checkMethod()
     {
         try {
-            if (!in_array($this->method, $this->_validMethods)) {
+            if (!in_array($this->_method, $this->_validMethods)) {
                 throw new EndpointException('405');
             }
             

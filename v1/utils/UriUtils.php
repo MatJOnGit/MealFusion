@@ -101,10 +101,10 @@ final class UriUtils {
                     throw new EndpointException('400');
                 }
                 
-                $this->_strippedUri = str_replace('_', ' ', urldecode($this->_strippedUri));
+                $this->queryParam = str_replace('_', ' ', urldecode($this->_strippedUri));
                 
-                if (!$this->_checkQueryParamType()) {
-                    throw new EndpointException('400');
+                if ($this->queryParam !== '') {
+                    $this->_checkQueryParamType();
                 }
                 
                 $this->isUriValid = true;
@@ -132,6 +132,7 @@ final class UriUtils {
         }
         
         if ($this->query === 'id') {
+            echo 'coucou';
             return preg_match($this->_regexes['onlyNumbers'], $this->queryParam);
         }
         

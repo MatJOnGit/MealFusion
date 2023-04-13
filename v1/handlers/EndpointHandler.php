@@ -40,10 +40,18 @@ final class EndpointHandler {
                 throw new EndpointException('400');
             }
             
-            $this->bodyUtils = new BodyUtils();
-            // if ($this->bodyUtils->isBodyValid) {
-            //     echo 'body is okay !';
-            // }
+            $this->bodyUtils = new BodyUtils($this->methodUtils->getMethod());
+            if ($this->bodyUtils->areDeeperBodyTestsRequired) {
+                $this->bodyUtils->checkBodyContent($this->uriUtils->getResource(), $this->uriUtils->getQuery());
+            }
+            
+            else {
+                echo 'No more tests required, this is a GET or DELETE request';
+            }
+            
+            if ($this->bodyUtils->isBodyValid === true) {
+                echo 'Tout est OK, passons aux requêtes';
+            }
             
             // $this->resource = $this->getResource();
         }
@@ -57,13 +65,13 @@ final class EndpointHandler {
         }
     }
     
-    public function getResource()
-    {
-        return $this->resource;
-    }
-    
     public function getQuery()
     {
         return $this->query;
+    }
+    
+    public function getResource()
+    {
+        return $this->resource;
     }
 }

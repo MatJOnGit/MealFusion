@@ -7,83 +7,94 @@ Returns the info of each type of api request for recipes:
     - the permissions required for the request to succeed,
     - the method of the corresponding model to call,
     - the different parameters to include in the body,
-    along with their needed type of data value
+      along with their needed type of data value
 ***********************************************************/
 return [
-    [
 
     /****************************************************/
     /******************  GET REQUESTS  ******************/
-
+    
+    [
         'method' => 'GET',
-        'uri' => '/MealFusion/v1/recipes?id={id}',
+        'query' => 'id',
         'permissions' => ['guest', 'contributor', 'admin'],
         'action' => 'getRecipeById',
-        'bodyParams' => []
+        'uriFormat' => '/MealFusion/v1/recipes?id={id}',
+        'bodyParamsFormat' => NULL
     ],
-
+    
     [
         'method' => 'GET',
-        'uri' => '/MealFusion/v1/recipes?name={name}',
+        'query' => 'name',
         'permissions' => ['contributor', 'admin'],
         'action' => 'getRecipeByName',
-        'bodyParams' => []
+        'uriFormat' => '/MealFusion/v1/recipes?name={name}',
+        'bodyParamsFormat' => NULL
     ],
-
+    
     [
         'method' => 'GET',
-        'uri' => '/MealFusion/v1/recipes',
+        'query' => '',
         'permissions' => ['contributor', 'admin'],
         'action' => 'getRecipes',
-        'bodyParams' => []
+        'uriFormat' => '/MealFusion/v1/recipes',
+        'bodyParamsFormat' => NULL
     ],
-
+    
     /*************************************************************/
     /**********************  POST REQUESTS  **********************/
-
+    
     [
         'method' => 'POST',
-        'uri' => 'MealFusion/v1/recipes',
+        'query' => '',
         'permissions' => ['contributor', 'admin'],
         'action' => 'postRecipe',
-        'bodyParams' => [
+        'uriFormat' => 'MealFusion/v1/recipes',
+        'bodyParamsFormat' => [
             'name' => 'string',
             'ingredients' => [
-                'id' => 'int',
-                'quantity' => 'int'
+                '0' => [
+                    'id' => 'int',
+                    'quantity' => 'int'
+                ]
+                /* Add other table elements if you want to add multiple 
+                ingredients to this recipe */
             ]
-            /* Add other table elements if you want to add multiple 
-            ingredients to this recipe */
         ]
     ],
-
+    
     /************************************************************/
     /**********************  PUT REQUESTS  **********************/
-
+    
     [
         'method' => 'PUT',
-        'uri' => 'MealFusion/v1/recipe?id={id}',
+        'query' => 'id',
         'permissions' => ['contributor', 'admin'],
         'action' => 'editRecipe',
-        'bodyParams' => [
+        'uriFormat' => 'MealFusion/v1/recipe?id={id}',
+        'bodyParamsFormat' => [
             'name' => 'string',
             'ingredients' => [
-                'id' => 'int',
-                'quantity' => 'int'
+                '0' => [
+                    'id' => 'int',
+                    'quantity' => 'int'
+                ]
+                /* Add other table elements if you want to add multiple 
+                ingredients to this recipe */
             ]
-            /* Add other table elements if you want to add multiple 
-            ingredients to this recipe */
         ]
     ],
-
+    
     /***************************************************************/
     /**********************  DELETE REQUESTS  **********************/
-
+    
     [
         'method' => 'DELETE',
-        'uri' => 'MealFusion/v1/recipes?id={id}',
+        'query' => 'id',
+        'requiredParam' => true,
         'permissions' => ['admin'],
         'action' => 'deleteRecipe',
-        'bodyParams' => []
+        'uriFormat' => 'MealFusion/v1/recipes?id={id}',
+        'bodyParamsFormat' => NULL
     ]
 ];
