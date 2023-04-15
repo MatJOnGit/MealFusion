@@ -8,10 +8,10 @@ use Exception;
 
 final class UriUtils {
     public bool $isUriValid = false;
-    public string $query = '';
-    public string $queryParam = '';
-    public string $resource = '';
-    
+
+    private string $_query = '';
+    private string $_queryParam = '';
+    private string $_resource = '';
     private array $_regexes;
     private string $_strippedUri = '';
     private string $_uri;
@@ -29,17 +29,17 @@ final class UriUtils {
     
     public function getQuery()
     {
-        return $this->query;
+        return $this->_query;
     }
     
     public function getQueryParam()
     {
-        return $this->queryParam;
+        return $this->_queryParam;
     }
     
     public function getResource()
     {
-        return $this->resource;
+        return $this->_resource;
     }
     
     /************************************************************************
@@ -67,8 +67,8 @@ final class UriUtils {
                     throw new EndpointException('400');
                 }
                 
-                $this->query = $this->_extractQuery();
-                $this->queryParam = str_replace(['?id=', '?name='], '', $this->_strippedUri);
+                $this->_query = $this->_extractQuery();
+                $this->_queryParam = str_replace(['?id=', '?name='], '', $this->_strippedUri);
             }
             
             else {
@@ -86,14 +86,14 @@ final class UriUtils {
     }
     
     /************************************************************************************
-    Remplaces underscores from strippedUri with spaces to form the query parameter to use
+    Replaces underscores from strippedUri with spaces to form the query parameter to use
     in database, then checks if the type of data is correct depending on query value
     ************************************************************************************/
     private function _checkQueryParam()
     {
         try {
             if (!$this->isUriValid) {
-                if (empty($this->queryParam)) {
+                if (empty($this->_queryParam)) {
                     throw new EndpointException('400');
                 }
                 
@@ -101,9 +101,9 @@ final class UriUtils {
                     throw new EndpointException('400');
                 }
                 
-                $this->queryParam = str_replace('_', ' ', urldecode($this->_strippedUri));
+                $this->_queryParam = str_replace('_', ' ', $this->_queryParam);
                 
-                if ($this->queryParam !== '') {
+                if ($this->_queryParam !== '') {
                     $this->_checkQueryParamType();
                 }
                 
@@ -127,16 +127,27 @@ final class UriUtils {
     ************************************************************************************/
     private function _checkQueryParamType()
     {
-        if ($this->query === 'name') {
-            return !preg_match($this->_regexes['onlyNumbers'], $this->queryParam);
+        try {
+            if ($this->_query === 'name') {
+                if (preg_match($this->_regexes['onlyNumbers'], $this->_queryParam)) {
+                    throw new EndpointException("Le nom de la ressource n'est pas invalide");
+                }
+            }
+            
+            if ($this->_query === 'id') {
+                if (!preg_match($this->_regexes['onlyNumbers'], $this->_queryParam)) {
+                    throw new EndpointException("Le nom de la ressource n'est pas invalide");
+                }
+            }
         }
         
-        if ($this->query === 'id') {
-            echo 'coucou';
-            return preg_match($this->_regexes['onlyNumbers'], $this->queryParam);
+        catch (EndpointException $e) {
+            $responseHandler = new ResponseHandler($e);
         }
         
-        return false;
+        catch (Exception $e) {
+            $responseHandler = new ResponseHandler('500');
+        }
     }
     
     /*******************************************************************************************
@@ -154,7 +165,7 @@ final class UriUtils {
                 throw new EndpointException('400');
             }
             
-            $this->resource = $matchedResource[0];
+            $this->_resource = $matchedResource[0];
             $this->_strippedUri = str_replace(['ingredients', 'recipes'], '', $this->_strippedUri);
         }
         

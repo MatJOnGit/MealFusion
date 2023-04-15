@@ -18,9 +18,7 @@ try {
     $endpointHandler = new EndpointHandler($db);
     
     if ($endpointHandler->isEndpointValid) {
-        $resource = $endpointHandler->getResource();
-        
-        if ($resource === 'ingredients') {
+        if ($endpointHandler->getResource() === 'ingredients') {
             $ingredientsController = new IngredientsController($endpointHandler);
             $responseHandler = new ResponseHandler($ingredientsController->processIngredientRequest());
         }
@@ -30,10 +28,6 @@ try {
             $responseHandler = new ResponseHandler($recipesController->processRecipeRequest());
         }
     }
-    
-    // else {
-    //     throw new EndpointException('400');
-    // }
 }
         
 catch (EndpointException $e) {

@@ -7,7 +7,7 @@ Returns the info of each type of api request for ingredients:
     - the permissions required for the request to succeed,
     - the method of the corresponding model to call,
     - the different parameters to include in the body,
-    along with their needed type of data value
+      along with their needed type of data value
 ***************************************************************/
 
 return [
@@ -19,39 +19,39 @@ return [
         'method' => 'GET',
         'query' => 'id',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'getIngredientById',
+        'action' => 'selectIngredientById',
         'uriFormat' => '/MealFusion/v1/ingredients?id={id}',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ],
-
+    
     [
         'method' => 'GET',
         'query' => 'name',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'getIngredientByName',
+        'action' => 'selectIngredientByName',
         'uriFormat' => '/MealFusion/v1/ingredients?name={name}',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ],
-
+    
     [
         'method' => 'GET',
         'query' => '',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'getIngredients',
+        'action' => 'selectIngredients',
         'uriFormat' => '/MealFusion/v1/ingredients',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ],
-
+    
     /*************************************************************/
     /**********************  POST REQUESTS  **********************/
-
+    
     [
         'method' => 'POST',
         'query' => '',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'postIngredient',
+        'action' => 'insertIngredient',
         'uriFormat' => 'MealFusion/v1/ingredients',
-        'bodyParamsFormat' => [
+        'bodyTemplate' => [
             'name' => 'string',
             'preparation' => '?string',
             'type' => 'string',
@@ -69,14 +69,14 @@ return [
     
     /************************************************************/
     /**********************  PUT REQUESTS  **********************/
-
+    
     [
         'method' => 'PUT',
         'query' => 'id',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'editIngredient',
+        'action' => 'updateIngredient',
         'uriFormat' => 'MealFusion/v1/ingredients?id={id}',
-        'bodyParamsFormat' => [
+        'bodyTemplate' => [
             'name' => 'string',
             'preparation' => '?string',
             'type' => 'string',
@@ -91,10 +91,10 @@ return [
             'note' => 'string'
         ]
     ],
-
+    
     /***************************************************************/
     /**********************  DELETE REQUESTS  **********************/
-
+    
     [
         'method' => 'DELETE',
         'query' => 'id',
@@ -102,6 +102,6 @@ return [
         'permissions' => ['admin'],
         'action' => 'deleteIngredient',
         'uriFormat' => 'MealFusion/v1/ingredients?id={id}',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ]
 ];

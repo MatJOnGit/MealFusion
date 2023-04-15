@@ -15,8 +15,12 @@ final class EndpointHandler {
     public HeadersUtils $headersUtils;
     public BodyUtils $bodyUtils;
     
-    public string $resource;
-    public string $query;
+    private string $_method;
+    private string $_resource;
+    private string $_query;
+    private string $_queryParam;
+    private $_body;
+    private $_queryAction;
     
     public object $db;
     
@@ -40,20 +44,21 @@ final class EndpointHandler {
                 throw new EndpointException('400');
             }
             
-            $this->bodyUtils = new BodyUtils($this->methodUtils->getMethod());
+            $this->_method = $this->methodUtils->getMethod();
+            $this->_resource = $this->uriUtils->getResource();
+            $this->_query = $this->uriUtils->getQuery();
+            
+            $this->bodyUtils = new BodyUtils($this->_method, $this->_resource, $this->_query);
             if ($this->bodyUtils->areDeeperBodyTestsRequired) {
                 $this->bodyUtils->checkBodyContent($this->uriUtils->getResource(), $this->uriUtils->getQuery());
             }
             
-            else {
-                echo 'No more tests required, this is a GET or DELETE request';
-            }
             
-            if ($this->bodyUtils->isBodyValid === true) {
-                echo 'Tout est OK, passons aux requêtes';
-            }
+            $this->_queryParam = $this->uriUtils->getQueryParam();
+            $this->_body = $this->bodyUtils->getBody();
+            $this->_queryAction = $this->bodyUtils->getQueryAction();
             
-            // $this->resource = $this->getResource();
+            $this->isEndpointValid = true;
         }
         
         catch (EndpointException $e) {
@@ -65,13 +70,33 @@ final class EndpointHandler {
         }
     }
     
+    public function getBody()
+    {
+        return $this->_body;
+    }
+    
+    public function getMethod()
+    {
+        return $this->_method;
+    }
+    
     public function getQuery()
     {
-        return $this->query;
+        return $this->_query;
+    }
+
+    public function getQueryAction()
+    {
+        return $this->_queryAction;
+    }
+    
+    public function getQueryParam()
+    {
+        return $this->_queryParam;
     }
     
     public function getResource()
     {
-        return $this->resource;
+        return $this->_resource;
     }
 }

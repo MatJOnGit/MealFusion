@@ -18,27 +18,27 @@ return [
         'method' => 'GET',
         'query' => 'id',
         'permissions' => ['guest', 'contributor', 'admin'],
-        'action' => 'getRecipeById',
+        'action' => 'selectRecipeById',
         'uriFormat' => '/MealFusion/v1/recipes?id={id}',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ],
     
     [
         'method' => 'GET',
         'query' => 'name',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'getRecipeByName',
+        'action' => 'selectRecipeByName',
         'uriFormat' => '/MealFusion/v1/recipes?name={name}',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ],
     
     [
         'method' => 'GET',
         'query' => '',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'getRecipes',
+        'action' => 'selectRecipes',
         'uriFormat' => '/MealFusion/v1/recipes',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ],
     
     /*************************************************************/
@@ -48,9 +48,9 @@ return [
         'method' => 'POST',
         'query' => '',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'postRecipe',
+        'action' => 'insertRecipe',
         'uriFormat' => 'MealFusion/v1/recipes',
-        'bodyParamsFormat' => [
+        'bodyTemplate' => [
             'name' => 'string',
             'ingredients' => [
                 '0' => [
@@ -70,9 +70,9 @@ return [
         'method' => 'PUT',
         'query' => 'id',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'editRecipe',
+        'action' => 'updateRecipe',
         'uriFormat' => 'MealFusion/v1/recipe?id={id}',
-        'bodyParamsFormat' => [
+        'bodyTemplate' => [
             'name' => 'string',
             'ingredients' => [
                 '0' => [
@@ -95,6 +95,6 @@ return [
         'permissions' => ['admin'],
         'action' => 'deleteRecipe',
         'uriFormat' => 'MealFusion/v1/recipes?id={id}',
-        'bodyParamsFormat' => NULL
+        'bodyTemplate' => NULL
     ]
 ];

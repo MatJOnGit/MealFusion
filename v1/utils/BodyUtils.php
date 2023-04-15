@@ -10,6 +10,7 @@ use Exception;
 class BodyUtils {
     private $_body;
     private string $_method;
+    private string $_queryAction = '';
     private array $_requiredBodyMethods = ['POST', 'PUT'];
     private array $_routes;
     
@@ -17,17 +18,37 @@ class BodyUtils {
     public bool $isBodyStructureValid = false;
     private bool $_isBodyEmpty = true;
     private bool $_isBodyRequired;
-    private bool $_hasSubKeys = false;
+    private $_bodyTemplate;
     
     public bool $isBodyValid = false;
     
-    public function __construct(string $method)
+    public function __construct(string $method, string $resource, $query)
     {
         $this->_method = $method;
         $this->_body = $this->_getBodySettings();
-        
         $this->_isBodyRequired = $this->_checkBodyRequirement();
         $this->_checkTestingNeeds();
+        $this->_getBodyTemplate($resource, $query);
+    }
+    
+    /*************************************************************************
+    Verifies if the body has every parameters need to run the request properly
+    *************************************************************************/
+    public function checkBodyContent(string $resource, string $query)
+    {
+        $this->_checkKeys($this->_bodyTemplate, $this->_body);
+        $this->_checkValuesType($this->_bodyTemplate, $this->_body);
+        $this->_checkIngredientsParamsContent($this->_bodyTemplate, $this->_body);
+    }
+    
+    public function getBody()
+    {
+        return $this->_body;
+    }
+
+    public function getQueryAction()
+    {
+        return $this->_queryAction;
     }
     
     /****************************************************************************
@@ -98,21 +119,6 @@ class BodyUtils {
         }
     }
     
-    /*************************************************************************
-    Verifies if the body has every parameters need to run the request properly
-    *************************************************************************/
-    public function checkBodyContent(string $resource, string $query)
-    {
-        $template = $this->_getBodyTemplate($resource, $query);
-        
-        $this->_checkKeys($template, $this->_body);
-        $this->_checkValuesType($template, $this->_body);
-        $this->_checkIngredientsParamsContent($template, $this->_body);
-        
-        if ($this->_hasSubKeys) {
-        }
-    }
-    
     /*****************************************
     Returns the appropriate resource file data
     *****************************************/
@@ -122,7 +128,9 @@ class BodyUtils {
         
         foreach ($this->_routes as $route) {
             if ($route['method'] === $this->_method && $route['query'] === $query) {
-                return $route['bodyParamsFormat'];
+                $this->_queryAction = $route['action'];
+                $this->_bodyTemplate = $route['bodyTemplate'];
+                return [];
             }
         }
         
