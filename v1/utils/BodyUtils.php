@@ -2,8 +2,8 @@
 
 namespace Api\Utils;
 
-use Api\Exceptions\EndpointException;
 use Api\Handlers\ResponseHandler;
+use Api\Exceptions\EndpointException;
 use JsonException;
 use Exception;
 
@@ -45,7 +45,7 @@ class BodyUtils {
     {
         return $this->_body;
     }
-
+    
     public function getQueryAction()
     {
         return $this->_queryAction;

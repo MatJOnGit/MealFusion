@@ -4,6 +4,8 @@ namespace Api\Utils;
 
 use PDO;
 use PDOException;
+use Exception;
+use Api\Handlers\ResponseHandler;
 
 final class DatabaseUtils {
     private $_db;
@@ -33,7 +35,11 @@ final class DatabaseUtils {
         }
         
         catch (PDOException $e) {
-            throw new \Exception("Connection failed: " . $e->getMessage());
+            $responseHandler = new ResponseHandler('500');
+        }
+        
+        catch (Exception $e) {
+            $responseHandler = new ResponseHandler('500');
         }
     }
     

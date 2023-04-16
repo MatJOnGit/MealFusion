@@ -27,7 +27,7 @@ return [
         'method' => 'GET',
         'query' => 'name',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'selectRecipeByName',
+        'action' => 'selectRecipesByName',
         'uriFormat' => '/MealFusion/v1/recipes?name={name}',
         'bodyTemplate' => NULL
     ],

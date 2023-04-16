@@ -10,12 +10,15 @@ final class RecipesController {
     private string $_queryAction;
     private string $_queryParam;
     private array $_methodParams;
+
+    private object $_db;
     
-    public function __construct($endpointHandler)
+    public function __construct(object $db, object $endpointHandler)
     {
         $this->_body = $endpointHandler->getBody();
         $this->_queryAction = $endpointHandler->getQueryAction();
         $this->_queryParam = $endpointHandler->getQueryParam();
+        $this->_db = $db;
     }
     
     public function processRecipeRequest()
@@ -29,7 +32,7 @@ final class RecipesController {
         if ($this->_queryAction === 'selectRecipeById') {
             $recipe->{$this->_queryAction}();
         }
-        elseif ($this->_queryAction === 'selectRecipeByName') {
+        elseif ($this->_queryAction === 'selectRecipesByName') {
             $recipe->{$this->_queryAction}();
         }
         elseif ($this->_queryAction === 'selectRecipes') {

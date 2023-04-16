@@ -19,12 +19,12 @@ try {
     
     if ($endpointHandler->isEndpointValid) {
         if ($endpointHandler->getResource() === 'ingredients') {
-            $ingredientsController = new IngredientsController($endpointHandler);
+            $ingredientsController = new IngredientsController($db, $endpointHandler);
             $responseHandler = new ResponseHandler($ingredientsController->processIngredientRequest());
         }
         
         else {
-            $recipesController = new RecipesController($endpointHandler);
+            $recipesController = new RecipesController($db, $endpointHandler);
             $responseHandler = new ResponseHandler($recipesController->processRecipeRequest());
         }
     }

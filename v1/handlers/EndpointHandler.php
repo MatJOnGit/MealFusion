@@ -22,13 +22,12 @@ final class EndpointHandler {
     private $_body;
     private $_queryAction;
     
-    public object $db;
-    
     public bool $isEndpointValid = false;
     
     public function __construct($db)
     {
         try {
+
             $this->methodUtils = new MethodUtils;
             if (!$this->methodUtils->isMethodValid) {
                 throw new EndpointException('405');
@@ -84,7 +83,7 @@ final class EndpointHandler {
     {
         return $this->_query;
     }
-
+    
     public function getQueryAction()
     {
         return $this->_queryAction;
