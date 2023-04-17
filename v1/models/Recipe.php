@@ -25,11 +25,11 @@ final class Recipe {
     public function selectRecipesByName(object $db, string $recipeName)
     {
         $selectRecipesQuery =
-            'SELECT
+            "SELECT
                 recipe_id, name, COUNT(recipe_id) as ingredientsCount
             FROM recipes 
-            WHERE name LIKE CONCAT('%', ? '%')
-            GROUP BY name';
+            WHERE name LIKE CONCAT('%', ?, '%')
+            GROUP BY recipe_id, name";
         $selectRecipesStatement = $db->prepare($selectRecipesQuery);
         $selectRecipesStatement->execute([$recipeName]);
         

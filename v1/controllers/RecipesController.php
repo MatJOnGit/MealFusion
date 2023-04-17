@@ -57,6 +57,6 @@ final class RecipesController {
                 break;
         }
         
-        // var_dump($response);
+        var_dump($response);
     }
 }

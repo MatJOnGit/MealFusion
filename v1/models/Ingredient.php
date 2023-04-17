@@ -13,7 +13,7 @@ final class Ingredient {
             'SELECT
                 ingr.id, ingr.name, ingr.preparation, ingr.type, ingr.measure, nut.calories, nut.proteins, nut.carbs, nut.sodium, nut.fibers, nut.sugar, nut.data_source
             FROM ingredients ingr
-            INNER JOIN nutrients nut ON ingr.id = nut.ingredient_id
+            INNER JOIN nutrients nut ON ingr.id = nut.id
             WHERE ingr.id = ?';
         $selectIngredientStatement = $db->prepare($selectIngredientQuery);
         $selectIngredientStatement->execute([$ingredientId]);
@@ -24,13 +24,13 @@ final class Ingredient {
     public function selectIngredientsByName(object $db, string $ingredientName)
     {
         $selectIngredientsQuery = 
-            'SELECT
+            "SELECT
                 ingr.id, ingr.name, ingr.preparation, ingr.type, ingr.measure, nut.calories, nut.proteins, nut.carbs, nut.sodium, nut.fibers, nut.sugar, nut.data_source
             FROM ingredients ingr
-            INNER JOIN nutrients nut ON ingr.id = nut.ingredient_id
-            WHERE ingr.name LIKE CONCAT('%', ? '%')';
+            INNER JOIN nutrients nut ON ingr.id = nut.id
+            WHERE ingr.name LIKE CONCAT('%', ?, '%')";
         $selectIngredientsStatement = $db->prepare($selectIngredientsQuery);
-        $selectIngredientsStatement->execute(["%$ingredientName%"]);
+        $selectIngredientsStatement->execute([$ingredientName]);
         
         return $selectIngredientsStatement->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -44,7 +44,7 @@ final class Ingredient {
             'SELECT
                 ingr.id, ingr.name, ingr.preparation, ingr.type, ingr.measure, nut.calories, nut.proteins, nut.carbs, nut.sodium, nut.fibers, nut.sugar, nut.data_source
             FROM ingredients ingr
-            INNER JOIN nutrients nut ON ingr.id = nut.ingredient_id';
+            INNER JOIN nutrients nut ON ingr.id = nut.id';
         $selectAllIngredientsStatement = $db->prepare($selectAllIngredientsQuery);
         $selectAllIngredientsStatement->execute();
         
