@@ -28,7 +28,7 @@ final class Ingredient {
                 ingr.id, ingr.name, ingr.preparation, ingr.type, ingr.measure, nut.calories, nut.proteins, nut.carbs, nut.sodium, nut.fibers, nut.sugar, nut.data_source
             FROM ingredients ingr
             INNER JOIN nutrients nut ON ingr.id = nut.ingredient_id
-            WHERE ingr.name LIKE ?';
+            WHERE ingr.name LIKE CONCAT('%', ? '%')';
         $selectIngredientsStatement = $db->prepare($selectIngredientsQuery);
         $selectIngredientsStatement->execute(["%$ingredientName%"]);
         

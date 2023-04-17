@@ -25,10 +25,6 @@ final class IngredientsController {
     {
         $ingredient = new Ingredient;
         
-        if (!method_exists($ingredient, $this->_queryAction)) {
-            throw new ControllerException('Method not found');
-        }
-        
         $ingredientId = intval($this->_queryParam);
         $response = NULL;
         

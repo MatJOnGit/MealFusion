@@ -25,27 +25,39 @@ final class RecipesController {
     {
         $recipe = new Recipe;
         
-        if (!method_exists($recipe, $this->_queryAction)) {
-            throw new ControllerException('Method not found');
-        }
+        $recipeId = intval($this->_queryParam);
+        $response = NULL;
         
-        if ($this->_queryAction === 'selectRecipeById') {
-            $recipe->{$this->_queryAction}();
+        switch ($this->_queryAction) {
+            case 'selectRecipeById':
+                $response = $recipe->selectRecipeById($this->_db, $recipeId);
+                break;
+
+            case 'selectRecipesByName':
+                $response = $recipe->selectRecipesByName($this->_db, $this->_queryParam);
+                break;
+
+            case 'selectRecipes':
+                $response = $recipe->selectRecipes($this->_db);
+                break;
+
+            case 'insertRecipe':
+                $response = $recipe->insertRecipe($this->_db, $this->_body);
+                break;
+
+            case 'updateRecipe':
+                $response = $recipe->updateRecipe($this->_db, $this->_body);
+                break;
+
+            case 'deleteRecipe':
+                $response = $recipe->deleteRecipe($this->_db, $recipeId);
+                break;
+
+            default:
+                throw new ControllerException('Method not found');
+                break;
         }
-        elseif ($this->_queryAction === 'selectRecipesByName') {
-            $recipe->{$this->_queryAction}();
-        }
-        elseif ($this->_queryAction === 'selectRecipes') {
-            $recipe->{$this->_queryAction}();
-        }
-        elseif ($this->_queryAction === 'addRecipe') {
-            $recipe->{$this->_queryAction}();
-        }
-        elseif ($this->_queryAction === 'updateRecipe') {
-            $recipe->{$this->_queryAction}();
-        }
-        else {
-            $recipe->{$this->_queryAction}();
-        }
+
+        var_dump($response);
     }
 }
