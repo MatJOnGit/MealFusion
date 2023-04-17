@@ -9,7 +9,7 @@ final class IngredientsController {
     private $_body;
     private string $_queryAction;
     private string $_queryParam;
-    private array $_methodParam;
+    private string $_permissions;
 
     private object $_db;
     

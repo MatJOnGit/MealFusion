@@ -45,6 +45,11 @@ class BodyUtils {
     {
         return $this->_body;
     }
+
+    public function getRoutes()
+    {
+        return $this->_routes;
+    }
     
     public function getQueryAction()
     {
@@ -145,9 +150,9 @@ class BodyUtils {
     {
         try {
             if (array_key_exists('ingredients', $bodyElt)) {
-                $ingredientsAmount = count(array_keys($template['ingredients']));
+                $ingredientParamCount = count(array_keys($template['ingredients']));
                 
-                if ($ingredientsAmount === 0) {
+                if ($ingredientParamCount === 0) {
                     throw new EndpointException('No ingredient parameters found');
                 }
                 

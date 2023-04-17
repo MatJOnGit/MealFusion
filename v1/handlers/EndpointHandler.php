@@ -27,7 +27,6 @@ final class EndpointHandler {
     public function __construct($db)
     {
         try {
-
             $this->methodUtils = new MethodUtils;
             if (!$this->methodUtils->isMethodValid) {
                 throw new EndpointException('405');
@@ -52,10 +51,11 @@ final class EndpointHandler {
                 $this->bodyUtils->checkBodyContent($this->uriUtils->getResource(), $this->uriUtils->getQuery());
             }
             
-            
             $this->_queryParam = $this->uriUtils->getQueryParam();
             $this->_body = $this->bodyUtils->getBody();
             $this->_queryAction = $this->bodyUtils->getQueryAction();
+            
+            $this->_checkEndpointPermissions();
             
             $this->isEndpointValid = true;
         }
@@ -66,6 +66,21 @@ final class EndpointHandler {
         
         catch (Exception $e) {
             $responseHandler = new ResponseHandler('500');
+        }
+    }
+    
+    /*********************************************************************************
+    Instanciate a error handler if the key owner is not authorized to use that request
+    *********************************************************************************/
+    private function _checkEndpointPermissions()
+    {
+        foreach ($this->bodyUtils->getRoutes() as $route) {
+            if ($this->_queryAction === $route['action']) {
+                if (!in_array($this->headersUtils->getPermissions(), $route['permissions'])) {
+                    echo 'Unauthorized request';
+                    $response = new ResponseHandler('401');
+                }
+            }
         }
     }
     

@@ -48,7 +48,7 @@ return [
         'method' => 'POST',
         'query' => '',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'insertRecipe',
+        'action' => 'insertNewRecipe',
         'uriFormat' => 'MealFusion/v1/recipes',
         'bodyTemplate' => [
             'name' => 'string',
@@ -70,17 +70,15 @@ return [
         'method' => 'PUT',
         'query' => 'id',
         'permissions' => ['contributor', 'admin'],
-        'action' => 'updateRecipe',
+        'action' => 'updateRecipeIngredient',
         'uriFormat' => 'MealFusion/v1/recipe?id={id}',
         'bodyTemplate' => [
-            'name' => 'string',
+            'formerId' => 'int',
             'ingredients' => [
                 '0' => [
-                    'id' => 'int',
-                    'quantity' => 'int'
+                    'newId' => 'int',
+                    'newQuantity' => 'int'
                 ]
-                /* Add other table elements if you want to add multiple 
-                ingredients to this recipe */
             ]
         ]
     ],

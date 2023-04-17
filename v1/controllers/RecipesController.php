@@ -9,8 +9,7 @@ final class RecipesController {
     private $_body;
     private string $_queryAction;
     private string $_queryParam;
-    private array $_methodParams;
-
+    
     private object $_db;
     
     public function __construct(object $db, object $endpointHandler)
@@ -32,32 +31,32 @@ final class RecipesController {
             case 'selectRecipeById':
                 $response = $recipe->selectRecipeById($this->_db, $recipeId);
                 break;
-
+                
             case 'selectRecipesByName':
                 $response = $recipe->selectRecipesByName($this->_db, $this->_queryParam);
                 break;
-
+                
             case 'selectRecipes':
                 $response = $recipe->selectRecipes($this->_db);
                 break;
-
-            case 'insertRecipe':
-                $response = $recipe->insertRecipe($this->_db, $this->_body);
+                
+            case 'insertNewRecipe':
+                $response = $recipe->insertNewRecipe($this->_db, $this->_body);
                 break;
-
-            case 'updateRecipe':
-                $response = $recipe->updateRecipe($this->_db, $this->_body);
+                
+            case 'updateRecipeIngredient':
+                $response = $recipe->updateRecipeIngredient($this->_db, $recipeId, $this->_body);
                 break;
-
+                
             case 'deleteRecipe':
                 $response = $recipe->deleteRecipe($this->_db, $recipeId);
                 break;
-
+                
             default:
                 throw new ControllerException('Method not found');
                 break;
         }
-
-        var_dump($response);
+        
+        // var_dump($response);
     }
 }

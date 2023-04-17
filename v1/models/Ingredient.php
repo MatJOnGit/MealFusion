@@ -35,6 +35,9 @@ final class Ingredient {
         return $selectIngredientsStatement->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    /******************************************
+    Returns all items in ingredients collection
+    ******************************************/
     public function selectIngredients(object $db)
     {
         $selectAllIngredientsQuery = 

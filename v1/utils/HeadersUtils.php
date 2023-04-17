@@ -62,10 +62,10 @@ final class HeadersUtils {
         }
     }
     
-    /****************************************************************
+    /*****************************************************************
     Verifies a authentification key in database if it is not empty,
-    then save the returned key owner's permissions if any is returned
-    ****************************************************************/
+    then saves the returned key owner's permissions if any is returned
+    *****************************************************************/
     private function _checkKeyPermissions($db)
     {
         try {
@@ -73,10 +73,11 @@ final class HeadersUtils {
                 throw new EndpointException('401');
             }
             
-            $user = new User;
             if (!$db) {
                 throw new EndpointException('500');
             }
+            
+            $user = new User;
             
             $permissions = $user->selectPermissions($db, $this->authKey);
             if (!$permissions) {
