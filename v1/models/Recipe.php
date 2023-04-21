@@ -26,14 +26,37 @@ final class Recipe {
     {
         $selectRecipesQuery =
             "SELECT
-                recipe_id, name, COUNT(recipe_id) as ingredientsCount
-            FROM recipes 
-            WHERE name LIKE CONCAT('%', ?, '%')
-            GROUP BY recipe_id, name";
+                rec.recipe_id, rec.name, rec.ingredient_id, rec.ingredient_quantity, ingr.name, ingr.preparation
+            FROM recipes rec
+            INNER JOIN ingredients ingr ON rec.ingredient_id = ingr.id
+            WHERE rec.name LIKE CONCAT('%', ?, '%')";
         $selectRecipesStatement = $db->prepare($selectRecipesQuery);
         $selectRecipesStatement->execute([$recipeName]);
         
-        return $selectRecipesStatement->fetchAll(PDO::FETCH_ASSOC);
+        $results = $selectRecipesStatement->fetchAll(PDO::FETCH_ASSOC);
+        
+        $recipes = [];
+        foreach ($results as $row) {
+            $recipeId = $row['recipe_id'];
+            if (!isset($recipes[$recipeId])) {
+                $recipes[$recipeId] = [
+                    'recipe_id' => $recipeId,
+                    'name' => $row['name'],
+                    'ingredient_details' => [],
+                ];
+            }
+            
+            if ($row['ingredient_id'] !== null) {
+                $recipes[$recipeId]['ingredient_details'][] = [
+                    'id' => $row['ingredient_id'],
+                    'name' => $row['name'],
+                    'preparation' => $row['preparation'],
+                    'quantity' => $row['ingredient_quantity'],
+                ];
+            }
+        }
+        
+        return array_values($recipes);
     }
     
     public function selectRecipes(object $db)

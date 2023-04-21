@@ -28,7 +28,7 @@ final class RecipesController {
             $recipe = new Recipe;
             
             $recipeId = intval($this->_queryParam);
-
+            
             switch ($this->_queryAction) {
                 case 'selectRecipeById':
                     $response = $recipe->selectRecipeById($this->_db, $recipeId);
