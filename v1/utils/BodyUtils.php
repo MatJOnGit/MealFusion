@@ -34,7 +34,7 @@ class BodyUtils {
     /*************************************************************************
     Verifies if the body has every parameters need to run the request properly
     *************************************************************************/
-    public function checkBodyContent(string $resource, string $query)
+    public function checkBodyContent()
     {
         $this->_checkKeys($this->_bodyTemplate, $this->_body);
         $this->_checkValuesType($this->_bodyTemplate, $this->_body);
@@ -75,11 +75,11 @@ class BodyUtils {
     private function _checkTestingNeeds()
     {
         if ($this->_isBodyRequired && $this->_isBodyEmpty) {
-            throw new EndpointException('Body should be filled');
+            throw new EndpointException(400, 'Bad request');
         }
         
         if (!$this->_isBodyRequired && !$this->_isBodyEmpty) {
-            throw new EndpointException('Body should be empty');
+            throw new EndpointException(400, 'Bad request');
         }
         
         if (!$this->_isBodyRequired && $this->_isBodyEmpty) {
@@ -96,15 +96,14 @@ class BodyUtils {
     {
         try {
             $stringifiedBody = file_get_contents("php://input");
-            
             if ($stringifiedBody === '') {
                 return NULL;
             }
             
             $body = json_decode($stringifiedBody, true, 512, JSON_THROW_ON_ERROR);
             
-            if (count($body) === 0) {
-                throw new EndpointException('Body is an empty array');
+            if (!$body || count($body) === 0) {
+                new ResponseHandler(400, 'Bad request');
             }
             
             $this->_isBodyEmpty = false;
@@ -120,7 +119,7 @@ class BodyUtils {
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
         }
     }
     
@@ -139,7 +138,7 @@ class BodyUtils {
             }
         }
         
-        throw new EndpointException('This endpoint does not exist.');
+        throw new EndpointException(500, 'Internal server error');
     }
     
     /*******************************************************************
@@ -153,7 +152,7 @@ class BodyUtils {
                 $ingredientParamCount = count(array_keys($template['ingredients']));
                 
                 if ($ingredientParamCount === 0) {
-                    throw new EndpointException('No ingredient parameters found');
+                    throw new EndpointException(400, 'Bad request');
                 }
                 
                 $ingredientTemplate = $template['ingredients'][0];
@@ -166,13 +165,16 @@ class BodyUtils {
             
             $this->isBodyValid = true;
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            var_dump($e->getCode());
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
     
@@ -184,18 +186,18 @@ class BodyUtils {
     {
         foreach ($body as $bodyKey => $bodyValue) {
             if (!array_key_exists($bodyKey, $template)) {
-                throw new EndpointException("La clé " . $bodyKey ." du body n'est pas demandées");
+                throw new EndpointException(400, 'Bad request');
             }
         }
         
         foreach ($template as $templateKey => $templateValue) {
             if (!array_key_exists($templateKey, $body)) {
-                throw new EndpointException("La clé " . $templateKey . " est manquante");
+                throw new EndpointException(400, 'Bad request');
             }
         }
         
         if (count($body) !== count(array_unique(array_keys($body)))) {
-            throw new EndpointException('Certaines clés sont en doublon');
+            throw new EndpointException(400, 'Bad request');
         }
     }
     
@@ -213,29 +215,31 @@ class BodyUtils {
                 $isArrayKey = is_array($body[$bodyKey]);
                 
                 if ($template[$bodyKey] === 'string' && !$isStringKey) {
-                    throw new EndpointException('String type expected, other type found');
+                    throw new EndpointException(400, 'Bad request');
                 }
                 
                 if ($template[$bodyKey] === '?string' && !$isNullKey && !$isStringKey) {
-                    throw new EndpointException('String or NULL expected, other type found');
+                    throw new EndpointException(400, 'Bad request');
                 }
                 
                 if ($template[$bodyKey] === 'int' && !$isIntKey) {
-                    throw new EndpointException('Int type expected, other type found');
+                    throw new EndpointException(400, 'Bad request');
                 }
                 
                 if (is_array($template[$bodyKey]) && !$isArrayKey) {
-                    throw new EndpointException('Array type expected, other type found');
+                    throw new EndpointException(400, 'Bad request');
                 }
             }
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
 }

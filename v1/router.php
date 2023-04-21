@@ -17,25 +17,29 @@ try {
     
     $endpointHandler = new EndpointHandler($db);
     
-    if ($endpointHandler->isEndpointValid) {
-        if ($endpointHandler->getResource() === 'ingredients') {
+    if (!$endpointHandler->isEndpointValid) {
+        throw new EndpointException(401, 'Invalid request');
+    }
+    
+    $resource = $endpointHandler->getResource();
+    switch ($resource) {
+        case 'ingredients':
             $ingredientsController = new IngredientsController($db, $endpointHandler);
-            $responseHandler = new ResponseHandler($ingredientsController->processIngredientRequest());
-        }
-        
-        else {
+            $ingredientsController->processIngredientRequest();
+            break;
+        case 'recipes':
             $recipesController = new RecipesController($db, $endpointHandler);
-            $responseHandler = new ResponseHandler($recipesController->processRecipeRequest());
-        }
+            $recipesController->processRecipeRequest();
+            break;
+        default:
+            throw new EndpointException(500, 'Internal server error');
     }
 }
-        
+
 catch (EndpointException $e) {
-    $responseHandler = new ResponseHandler($e);
-    exit();
+    $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
 }
 
 catch (Exception $e) {
-    $responseHandler = new ResponseHandler('500');
-    exit();
+    $responseHandler = new ResponseHandler(500, 'Internal server error');
 }

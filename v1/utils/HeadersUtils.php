@@ -43,22 +43,24 @@ final class HeadersUtils {
             $authHeader = array_key_exists('Authorization', $allHeaders) ? $allHeaders['Authorization'] : false;
             
             if (!$contentType || $contentType !== 'application/json') {
-                throw new EndpointException('400');
+                throw new EndpointException(400, 'Bad request');
             }
             
             if (!$authHeader || !preg_match($this->_regexes['authKey'], $authHeader)) {
-                throw new EndpointException('400');
+                throw new EndpointException(400, 'Bad request');
             }
             
             $this->authKey = str_replace("Bearer ", "", $allHeaders['Authorization']);
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
     
@@ -70,30 +72,32 @@ final class HeadersUtils {
     {
         try {
             if (!$this->authKey) {
-                throw new EndpointException('401');
+                throw new EndpointException(401, 'Unauthorized request');
             }
             
             if (!$db) {
-                throw new EndpointException('500');
+                throw new EndpointException(500, 'Internal server error');
             }
             
             $user = new User;
             
             $permissions = $user->selectPermissions($db, $this->authKey);
             if (!$permissions) {
-                throw new EndpointException('401');
+                throw new EndpointException(401, 'Unauthorized request');
             }
             
             $this->permissions = $permissions['api_permissions'];
             $this->areHeadersValid = true;
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
 }

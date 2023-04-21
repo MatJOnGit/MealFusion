@@ -30,18 +30,20 @@ final class MethodUtils {
     {
         try {
             if (!in_array($this->_method, $this->_validMethods)) {
-                throw new EndpointException('405');
+                throw new EndpointException(405, 'Unauthorized method');
             }
             
             $this->isMethodValid = true;
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
 }

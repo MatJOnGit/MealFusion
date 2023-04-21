@@ -29,17 +29,17 @@ final class EndpointHandler {
         try {
             $this->methodUtils = new MethodUtils;
             if (!$this->methodUtils->isMethodValid) {
-                throw new EndpointException('405');
+                throw new EndpointException(405, 'Method not allowed');
             }
             
             $this->uriUtils = new UriUtils();
             if (!$this->uriUtils->isUriValid) {
-                throw new EndpointException('404');
+                throw new EndpointException(404, 'Invalid request');
             }
             
             $this->headersUtils = new HeadersUtils($db);
             if (!$this->headersUtils->areHeadersValid) {
-                throw new EndpointException('400');
+                throw new EndpointException(400, 'Bad request');
             }
             
             $this->_method = $this->methodUtils->getMethod();
@@ -48,7 +48,7 @@ final class EndpointHandler {
             
             $this->bodyUtils = new BodyUtils($this->_method, $this->_resource, $this->_query);
             if ($this->bodyUtils->areDeeperBodyTestsRequired) {
-                $this->bodyUtils->checkBodyContent($this->uriUtils->getResource(), $this->uriUtils->getQuery());
+                $this->bodyUtils->checkBodyContent();
             }
             
             $this->_queryParam = $this->uriUtils->getQueryParam();
@@ -61,11 +61,11 @@ final class EndpointHandler {
         }
         
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
         }
     }
     
@@ -74,13 +74,22 @@ final class EndpointHandler {
     *********************************************************************************/
     private function _checkEndpointPermissions()
     {
-        foreach ($this->bodyUtils->getRoutes() as $route) {
-            if ($this->_queryAction === $route['action']) {
-                if (!in_array($this->headersUtils->getPermissions(), $route['permissions'])) {
-                    echo 'Unauthorized request';
-                    $response = new ResponseHandler('401');
+        try {
+            foreach ($this->bodyUtils->getRoutes() as $route) {
+                if ($this->_queryAction === $route['action']) {
+                    if (!in_array($this->headersUtils->getPermissions(), $route['permissions'])) {
+                        throw new EndpointException(403, 'Unauthorized request');
+                    }
                 }
             }
+        }
+        
+        catch (EndpointException $e) {
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+        }
+        
+        catch (Exception $e) {
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
         }
     }
     

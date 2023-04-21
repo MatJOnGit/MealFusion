@@ -20,7 +20,7 @@ final class UriUtils {
     {
         $this->_regexes = include('./v1/config/regex.php');
         $this->_uri = $_SERVER['REQUEST_URI'];
-        
+
         $this->_checkUri();
         $this->_checkResource();
         $this->_checkQuery();
@@ -64,7 +64,7 @@ final class UriUtils {
         try {
             if (!empty($this->_strippedUri)) {
                 if (!preg_match($this->_regexes['query'], $this->_strippedUri)) {
-                    throw new EndpointException('400');
+                    throw new EndpointException(400, 'Bad request');
                 }
                 
                 $this->_query = $this->_extractQuery();
@@ -75,13 +75,15 @@ final class UriUtils {
                 $this->isUriValid = true;
             }
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
     
@@ -94,11 +96,11 @@ final class UriUtils {
         try {
             if (!$this->isUriValid) {
                 if (empty($this->_queryParam)) {
-                    throw new EndpointException('400');
+                    throw new EndpointException(400, 'Bad request');
                 }
                 
                 if (!preg_match($this->_regexes['queryParam'], urldecode($this->_strippedUri))) {
-                    throw new EndpointException('400');
+                    throw new EndpointException(400, 'Bad request');
                 }
                 
                 $this->_queryParam = str_replace('_', ' ', $this->_queryParam);
@@ -110,13 +112,15 @@ final class UriUtils {
                 $this->isUriValid = true;
             }
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
     
@@ -130,23 +134,25 @@ final class UriUtils {
         try {
             if ($this->_query === 'name') {
                 if (preg_match($this->_regexes['onlyNumbers'], $this->_queryParam)) {
-                    throw new EndpointException("Le nom de la ressource n'est pas invalide");
+                    throw new EndpointException(400, 'Bad request');
                 }
             }
             
             if ($this->_query === 'id') {
                 if (!preg_match($this->_regexes['onlyNumbers'], $this->_queryParam)) {
-                    throw new EndpointException("Le nom de la ressource n'est pas invalide");
+                    throw new EndpointException(400, 'Bad request');
                 }
             }
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
     
@@ -158,23 +164,25 @@ final class UriUtils {
     {
         try {
             if (empty($this->_strippedUri)) {
-                throw new EndpointException('400');
+                throw new EndpointException(400, 'Bad request');
             }
             
             if (!preg_match($this->_regexes['resource'], $this->_strippedUri, $matchedResource)) {
-                throw new EndpointException('400');
+                throw new EndpointException(400, 'Bad request');
             }
             
             $this->_resource = $matchedResource[0];
             $this->_strippedUri = str_replace(['ingredients', 'recipes'], '', $this->_strippedUri);
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
     
@@ -186,22 +194,24 @@ final class UriUtils {
     {
         try {
             if (empty($this->_uri)) {
-                throw new EndpointException('400');
+                throw new EndpointException(400, 'Bad request');
             }
             
             if (!preg_match($this->_regexes['uri'], $this->_uri)) {
-                throw new EndpointException('400');
+                throw new EndpointException(400, 'Bad request');
             }
             
             $this->_strippedUri = str_replace('/MealFusion/v1/', '', $this->_uri);
         }
-        
+
         catch (EndpointException $e) {
-            $responseHandler = new ResponseHandler($e);
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
 }

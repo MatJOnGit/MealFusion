@@ -86,7 +86,7 @@ final class Ingredient {
         
         catch (PDOException $e) {
             $db->rollBack();
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
         }
     }
     
@@ -126,7 +126,7 @@ final class Ingredient {
         
         catch (PDOException $e) {
             $db->rollBack();
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
         }
     }
     
@@ -148,7 +148,7 @@ final class Ingredient {
         
         catch (PDOException $e) {
             $db->rollBack();
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
         }
     }
 }

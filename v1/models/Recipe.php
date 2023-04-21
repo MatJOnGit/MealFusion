@@ -59,7 +59,7 @@ final class Recipe {
         $recipeId = $recipeId !== false ? $recipeId + 1 : 1;
         
         if (!$recipeId) {
-            throw new Exception("Unable to generate recipe ID");
+            throw new Exception(500, 'Internal server error');
         }
         
         $insertRecipeQuery = 'INSERT INTO recipes (recipe_id, name, ingredient_id, ingredient_quantity) VALUES (:recipe_id, :name, :ingredient_id, :ingredient_quantity)';
@@ -82,7 +82,7 @@ final class Recipe {
         
         catch (Exception $e) {
             $db->rollBack();
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
         }
     }
     
@@ -101,7 +101,7 @@ final class Recipe {
             $recipeExists = $checkRecipeStatement->fetchColumn();
             
             if ($recipeExists === 0) {
-                throw new RuntimeException("La recette n'existe pas dans la base de données");
+                throw new RuntimeException(500, 'Internal server error');
             }
             
             $updateRecipeIngredientQuery = 'UPDATE recipes SET ingredient_id = :new_id, ingredient_quantity = :new_quantity WHERE recipe_id = :recipe_id AND ingredient_id = :former_id';
@@ -114,7 +114,7 @@ final class Recipe {
             ]);
             
             if ($updateRecipeIngredientStatement->rowCount() === 0) {
-                throw new RuntimeException("Impossible de modifier l'ingrédient de la recette");
+                throw new RuntimeException(500, 'Internal server error');
             }
             
             $db->commit();
@@ -137,7 +137,7 @@ final class Recipe {
         $checkFoodPlanStatement->execute([$recipeId]);
         
         if ($checkFoodPlanStatement->fetchColumn() > 0) {
-            throw new RuntimeException("Impossible de supprimer la recette car elle est présente dans un plan nutritionnel.");
+            throw new RuntimeException(500, 'Internal server error');
         }
         
         $deleteRecipeQuery = 'DELETE FROM recipes WHERE recipe_id = ?';
@@ -146,7 +146,7 @@ final class Recipe {
         $deleteRecipeStatement->execute([$recipeId]);
         
         if ($deleteRecipeStatement->rowCount() === 0) {
-            throw new RuntimeException("Impossible de supprimer la recette.");
+            throw new RuntimeException(500, 'Internal server error');
         }
     }
 }

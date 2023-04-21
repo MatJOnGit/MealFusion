@@ -35,11 +35,13 @@ final class DatabaseUtils {
         }
         
         catch (PDOException $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
+            exit();
         }
         
         catch (Exception $e) {
-            $responseHandler = new ResponseHandler('500');
+            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            exit();
         }
     }
     

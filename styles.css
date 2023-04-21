@@ -1,0 +1,30 @@
+h1 {
+    color: red;
+}
+
+pre {
+    background-color: #f6f8fa;
+    color: #1f2328;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 85%;
+    overflow: auto;
+    padding: 16px;
+    line-height: 1.45;
+    margin-top: 0.5rem;
+    word-wrap: normal;
+    margin-bottom: 16px;
+}
+
+pre, code {
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+}
