@@ -26,32 +26,40 @@ final class Recipe {
     {
         $selectRecipesQuery =
             "SELECT
-                rec.recipe_id, rec.name, rec.ingredient_id, rec.ingredient_quantity, ingr.name, ingr.preparation
+                rec.recipe_id,
+                rec.name AS recipe_name,
+                rec.ingredient_id,
+                rec.ingredient_quantity,
+                ingr.name AS ingredient_name,
+                ingr.preparation,
+                ingr.measure
             FROM recipes rec
             INNER JOIN ingredients ingr ON rec.ingredient_id = ingr.id
-            WHERE rec.name LIKE CONCAT('%', ?, '%')";
+            WHERE rec.name LIKE CONCAT('%', ?, '%')
+            ORDER BY rec.name";
         $selectRecipesStatement = $db->prepare($selectRecipesQuery);
         $selectRecipesStatement->execute([$recipeName]);
         
-        $results = $selectRecipesStatement->fetchAll(PDO::FETCH_ASSOC);
+        $recipeItems = $selectRecipesStatement->fetchAll(PDO::FETCH_ASSOC);
         
         $recipes = [];
-        foreach ($results as $row) {
-            $recipeId = $row['recipe_id'];
+        foreach ($recipeItems as $recipeItem) {
+            $recipeId = $recipeItem['recipe_id'];
             if (!isset($recipes[$recipeId])) {
                 $recipes[$recipeId] = [
                     'recipe_id' => $recipeId,
-                    'name' => $row['name'],
+                    'recipe_name' => $recipeItem['recipe_name'],
                     'ingredient_details' => [],
                 ];
             }
             
-            if ($row['ingredient_id'] !== null) {
+            if ($recipeItem['ingredient_id'] !== null) {
                 $recipes[$recipeId]['ingredient_details'][] = [
-                    'id' => $row['ingredient_id'],
-                    'name' => $row['name'],
-                    'preparation' => $row['preparation'],
-                    'quantity' => $row['ingredient_quantity'],
+                    'id' => $recipeItem['ingredient_id'],
+                    'ingredient_name' => $recipeItem['ingredient_name'],
+                    'preparation' => $recipeItem['preparation'],
+                    'measure' => $recipeItem['measure'],
+                    'quantity' => $recipeItem['ingredient_quantity']
                 ];
             }
         }
