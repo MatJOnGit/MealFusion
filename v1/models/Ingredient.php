@@ -11,7 +11,7 @@ final class Ingredient {
     {
         $selectIngredientQuery = 
             'SELECT
-                ingr.id, ingr.name, ingr.preparation, ingr.type, ingr.measure, nut.calories, nut.proteins, nut.carbs, nut.sodium, nut.fibers, nut.sugar, nut.data_source
+                ingr.id, ingr.name, ingr.preparation, ingr.type, ingr.measure, nut.calories, nut.fat, nut.proteins, nut.carbs, nut.sodium, nut.fibers, nut.sugar, nut.data_source
             FROM ingredients ingr
             INNER JOIN nutrients nut ON ingr.id = nut.id
             WHERE ingr.id = ?';
@@ -54,42 +54,46 @@ final class Ingredient {
     
     public function insertIngredient(object $db, array $ingredientParams)
     {
-        try {
-            $db->beginTransaction();
-            
-            $insertIngredientQuery =
-                'INSERT INTO ingredients (name, preparation, type, measure) VALUES (:name, :preparation, :type, :measure)';
-            $insertIngredientStatement = $db->prepare($insertIngredientQuery);
-            $insertIngredientStatement->execute([
-                'name' => $ingredientParams['name'],
-                'preparation' =>  $ingredientParams['preparation'],
-                'type' =>  $ingredientParams['type'],
-                'measure' =>  $ingredientParams['measure']
-            ]);
-            
-            $insertIngredientNutrientsQuery =
-                'INSERT INTO nutrients (id, calories, fat, proteins, carbs, sodium, fibers, sugar, data_source) VALUES (:id, :calories, :fat, :proteins, :carbs, :sodium, :fibers, :sugar, :source)';
-            $insertIngredientNutrientsStatement = $db->prepare($insertIngredientNutrientsQuery);
-            $insertIngredientNutrientsStatement->execute([
-                'id' => $db->lastInsertId(),
-                'calories' => $ingredientParams['calories'],
-                'fat' => $ingredientParams['fat'],
-                'proteins' => $ingredientParams['proteins'],
-                'carbs' => $ingredientParams['carbs'],
-                'sodium' => $ingredientParams['sodium'],
-                'fibers' => $ingredientParams['fibers'],
-                'sugar' => $ingredientParams['sugar'],
-                'source' => $ingredientParams['note']
-            ]);
-            
-            $db->commit();
-        }
+    try {
+        $db->beginTransaction();
         
-        catch (PDOException $e) {
-            $db->rollBack();
-            $responseHandler = new ResponseHandler(500, 'Internal server error');
-        }
+        $insertIngredientNutrientsQuery =
+            'INSERT INTO nutrients (calories, fat, proteins, carbs, sodium, fibers, sugar, data_source) VALUES (:calories, :fat, :proteins, :carbs, :sodium, :fibers, :sugar, :source)';
+        $insertIngredientNutrientsStatement = $db->prepare($insertIngredientNutrientsQuery);
+        $insertIngredientNutrientsStatement->execute([
+            'calories' => $ingredientParams['calories'],
+            'fat' => $ingredientParams['fat'],
+            'proteins' => $ingredientParams['proteins'],
+            'carbs' => $ingredientParams['carbs'],
+            'sodium' => $ingredientParams['sodium'],
+            'fibers' => $ingredientParams['fibers'],
+            'sugar' => $ingredientParams['sugar'],
+            'source' => $ingredientParams['note']
+        ]);
+        
+        $newIngredientId = $db->lastInsertId();
+        
+        $insertIngredientQuery =
+            'INSERT INTO ingredients (id, name, preparation, type, measure) VALUES (:id, :name, :preparation, :type, :measure)';
+        $insertIngredientStatement = $db->prepare($insertIngredientQuery);
+        $insertIngredientStatement->execute([
+            'id' => $newIngredientId,
+            'name' => $ingredientParams['name'],
+            'preparation' =>  $ingredientParams['preparation'],
+            'type' =>  $ingredientParams['type'],
+            'measure' =>  $ingredientParams['measure']
+        ]);
+        
+        $db->commit();
+        
+        return $newIngredientId;
     }
+    
+    catch (PDOException $e) {
+        $db->rollBack();
+        $responseHandler = new ResponseHandler(500, 'Internal server error');
+    }
+}
     
     public function updateIngredient(object $db, int $ingredientId, array $ingredientParams)
     {
@@ -123,6 +127,7 @@ final class Ingredient {
             ]);
             
             $db->commit();
+            return $ingredientId;
         }
         
         catch (PDOException $e) {

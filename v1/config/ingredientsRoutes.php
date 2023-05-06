@@ -43,10 +43,10 @@ return [
     ],
     
     /*************************************************************/
-    /**********************  POST REQUESTS  **********************/
+    /**********************  PUT REQUESTS  **********************/
     
     [
-        'method' => 'POST',
+        'method' => 'PUT',
         'query' => '',
         'permissions' => ['contributor', 'admin'],
         'action' => 'insertIngredient',
@@ -63,15 +63,15 @@ return [
             'sodium' => 'int',
             'fibers' => 'int',
             'sugar' => 'int',
-            'note' => 'string'
+            'note' => '?string'
         ]
     ],
     
     /************************************************************/
-    /**********************  PUT REQUESTS  **********************/
+    /**********************  POST REQUESTS  **********************/
     
     [
-        'method' => 'PUT',
+        'method' => 'POST',
         'query' => 'id',
         'permissions' => ['contributor', 'admin'],
         'action' => 'updateIngredient',
@@ -88,7 +88,7 @@ return [
             'sodium' => 'int',
             'fibers' => 'int',
             'sugar' => 'int',
-            'note' => 'string'
+            'note' => '?string'
         ]
     ],
     

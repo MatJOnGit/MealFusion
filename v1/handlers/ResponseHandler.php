@@ -3,13 +3,13 @@
 namespace Api\Handlers;
 
 final class ResponseHandler {
-    private $_httpCode = 500;
-    private $_alert = '';
+    private $_httpCode;
+    private $_response = '';
     
-    public function __construct($code, $alert = '')
+    public function __construct($code, $response)
     {
         $this->_httpCode = $code;
-        $this->_alert = $alert;
+        $this->_response = $response;
         
         switch ($this->_httpCode) {
             case '200':
@@ -25,7 +25,7 @@ final class ResponseHandler {
     {
         $error = [
             'status' => $this->_httpCode,
-            'message' => $this->_alert,
+            'message' => $this->_response,
             'documentation' => 'http://localhost:8080/MealFusion/documentation.html'
         ];
         
@@ -39,7 +39,7 @@ final class ResponseHandler {
     {
         $response = [
             'status' => $this->_httpCode,
-            'data' => $this->_alert
+            'data' => $this->_response
         ];
         
         http_response_code(200);

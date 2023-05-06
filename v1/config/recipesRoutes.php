@@ -42,10 +42,10 @@ return [
     ],
     
     /*************************************************************/
-    /**********************  POST REQUESTS  **********************/
+    /**********************  PUT REQUESTS  **********************/
     
     [
-        'method' => 'POST',
+        'method' => 'PUT',
         'query' => '',
         'permissions' => ['contributor', 'admin'],
         'action' => 'insertNewRecipe',
@@ -64,10 +64,10 @@ return [
     ],
     
     /************************************************************/
-    /**********************  PUT REQUESTS  **********************/
+    /**********************  POST REQUESTS  **********************/
     
     [
-        'method' => 'PUT',
+        'method' => 'POST',
         'query' => 'id',
         'permissions' => ['contributor', 'admin'],
         'action' => 'updateRecipeIngredient',

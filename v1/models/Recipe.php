@@ -90,7 +90,7 @@ final class Recipe {
         $recipeId = $recipeId !== false ? $recipeId + 1 : 1;
         
         if (!$recipeId) {
-            throw new Exception(500, 'Internal server error');
+            throw new Exception(913, 'Internal server error');
         }
         
         $insertRecipeQuery = 'INSERT INTO recipes (recipe_id, name, ingredient_id, ingredient_quantity) VALUES (:recipe_id, :name, :ingredient_id, :ingredient_quantity)';
@@ -109,11 +109,12 @@ final class Recipe {
             }
             
             $db->commit();
+            return $recipeId;
         }
         
         catch (Exception $e) {
             $db->rollBack();
-            $responseHandler = new ResponseHandler(500, 'Internal server error');
+            $responseHandler = new ResponseHandler(914, 'Internal server error');
         }
     }
     
@@ -132,7 +133,7 @@ final class Recipe {
             $recipeExists = $checkRecipeStatement->fetchColumn();
             
             if ($recipeExists === 0) {
-                throw new RuntimeException(500, 'Internal server error');
+                throw new RuntimeException(915, 'Internal server error');
             }
             
             $updateRecipeIngredientQuery = 'UPDATE recipes SET ingredient_id = :new_id, ingredient_quantity = :new_quantity WHERE recipe_id = :recipe_id AND ingredient_id = :former_id';
@@ -145,10 +146,11 @@ final class Recipe {
             ]);
             
             if ($updateRecipeIngredientStatement->rowCount() === 0) {
-                throw new RuntimeException(500, 'Internal server error');
+                throw new RuntimeException(916, 'Internal server error');
             }
             
             $db->commit();
+            return $recipeId;
         }
         
         catch (Exception $e) {
