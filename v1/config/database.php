@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'hostname' => 'localhost',
-    'dbname' => 'dodie',
+    'hostname' => 'database',
+    'dbname' => 'dodie_db',
     'charset' => 'utf8',
-    'port' => 3308,
+    'port' => 3306,
     'username' => 'root',
-    'password' => 'root'
+    'password' => 'Dockered92'
 ];

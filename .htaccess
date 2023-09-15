@@ -5,17 +5,3 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php/$1 [L,QSA]
 
-# Accept GET, PUT, POST and DELETE requests
-Header set Access-Control-Allow-Methods "GET, PUT, POST, DELETE"
-
-# Allow custom request headers
-Header always set Access-Control-Allow-Headers "Content-Type, Authorization, Accept"
-
-# Allow access from any source
-Header set Access-Control-Allow-Origin "*"
-
-# Allow cookies
-Header set Access-Control-Allow-Credentials "true"
-
-# Allow caching for one hour
-Header set Access-Control-Max-Age "3600"
