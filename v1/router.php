@@ -14,13 +14,13 @@ use Api\Handlers\ResponseHandler;
 try {
     $dbUtils = new DatabaseUtils();
     $db = $dbUtils->connect();
-    
+
     $endpointHandler = new EndpointHandler($db);
-    
+
     if (!$endpointHandler->isEndpointValid) {
         throw new EndpointException(401, 'Invalid request');
     }
-    
+
     $resource = $endpointHandler->getResource();
     switch ($resource) {
         case 'ingredients':
@@ -34,12 +34,8 @@ try {
         default:
             throw new EndpointException(500, 'Internal server error');
     }
-}
-
-catch (EndpointException $e) {
+} catch (EndpointException $e) {
     $responseHandler = new ResponseHandler($e->getCode(), $e->getMessage());
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $responseHandler = new ResponseHandler(500, 'Internal server error');
 }
